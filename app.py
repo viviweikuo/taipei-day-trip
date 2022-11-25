@@ -20,7 +20,7 @@ app.secret_key = "Gundam 00 is the best!!"
 # link to the database & create a cursor object
 attractions = mysql.connector.connect(
     host = "localhost",
-    user = "viviweikuo",
+    user = "root",
     password = "zxcvbnmM12*",
     database = "taipei_day_trip"
 )

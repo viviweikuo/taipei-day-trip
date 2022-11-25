@@ -6,7 +6,7 @@ import mysql.connector
 # 連線資料庫
 attractions = mysql.connector.connect(
     host = "localhost",
-    user = "viviweikuo",
+    user = "root",
     password = "zxcvbnmM12*",
     database = "taipei_day_trip"
 )

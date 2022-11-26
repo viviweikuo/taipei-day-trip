@@ -1,6 +1,3 @@
-import sys
-import json
-import requests
 import mysql.connector
 import math
 from flask import Flask
@@ -9,7 +6,6 @@ from flask import render_template
 from flask import redirect
 from flask import url_for
 from flask import session
-from flask import json
 from flask import jsonify
 
 app=Flask(__name__)
@@ -24,7 +20,6 @@ attractions = mysql.connector.connect(
     password = "zxcvbnmM12*",
     database = "taipei_day_trip"
 )
-mycursor = attractions.cursor(buffered=True)
 
 # Pages
 @app.route("/")
@@ -44,6 +39,7 @@ def thankyou():
 @app.route("/api/attractions")
 def get_attractions():
 	try:
+		mycursor = attractions.cursor(buffered=True)
 		page = request.args.get("page", type=int)
 		keyword = request.args.get("keyword", type=str)
 		per_page = 12
@@ -134,8 +130,9 @@ def get_attractions():
 def get_attraction_id(attractionId):
 	try:
 		# search by id
+		mycursor = attractions.cursor(buffered=True)
 		search_query = "SELECT * FROM attractions WHERE id = %s"
-		mycursor.execute = (search_query, (attractionId, ))
+		mycursor.execute(search_query, (attractionId, ))
 		found_data = mycursor.fetchone()
 
 		data = {}
@@ -159,7 +156,7 @@ def get_attraction_id(attractionId):
 		return jsonify(response)
 
 	except:
-		if not mycursor.rowcount:
+		if found_data is None:
 			response = {
 				"error": True,
 				"message": "請輸入正確的編號"
@@ -179,11 +176,12 @@ def get_attraction_id(attractionId):
 @app.route("/api/categories")
 def list_categories():
 	try:
+		mycursor = attractions.cursor(buffered=True)
 		search_query = "SELECT category FROM attractions GROUP BY category ORDER BY category DESC"
-		mycursor.execute = (search_query)
+		mycursor.execute(search_query)
 		found_data = mycursor.fetchall()
 
-		if not mycursor.rowcount:
+		if found_data is None:
 			response = {
 				"error": True,
 				"message": "伺服器內部錯誤"
@@ -198,6 +196,5 @@ def list_categories():
 			
 	finally:
 		mycursor.close()
-
 
 app.run(host="0.0.0.0", port=3000, debug=True)

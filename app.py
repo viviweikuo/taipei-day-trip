@@ -40,7 +40,7 @@ def booking():
 def thankyou():
 	return render_template("thankyou.html")
 
-# 取得景點資料
+# 取得景點資料: 算出總頁數 / 每頁12筆
 @app.route("/api/attractions")
 def get_attractions():
 	try:
@@ -48,7 +48,7 @@ def get_attractions():
 		keyword = request.args.get("keyword", type=str)
 		per_page = 12
 
-		if keyword == None:
+		if (keyword == None) or (keyword == ""):
 			# total pages without filter
 			search_no_filter = "SELECT COUNT(*) FROM attractions"
 			mycursor.execute(search_no_filter)
@@ -64,7 +64,7 @@ def get_attractions():
 			total_page_yes_filter = math.ceil(total_rows_yes_filter[0] / per_page)
 			print(total_page_yes_filter)
 
-		if keyword == None:
+		if (keyword == None) or (keyword == ""):
 			# fetch data without filter
 			search_query = "SELECT * FROM attractions LIMIT %s, %s"
 			row_start = page * per_page
@@ -94,13 +94,25 @@ def get_attractions():
 				"images": result[9]
 			})
 
-		if (keyword == None and page+1 < total_page_no_filter) or (keyword != None and page+1 < total_page_yes_filter):
+		if (keyword == None or keyword == "") and page+1 < total_page_no_filter:
 			response = {
 				"nextPage": int(page+1),
 				"data": data
 			}
 			return jsonify(response)
-		elif (keyword == None and page+1 == total_page_no_filter) or (keyword != None and page+1 == total_page_yes_filter):
+		elif (keyword != None or keyword != "") and page+1 < total_page_yes_filter:
+			response = {
+				"nextPage": int(page+1),
+				"data": data
+			}
+			return jsonify(response)
+		elif (keyword == None or keyword == "") and page+1 == total_page_no_filter:
+			response = {
+				"nextPage": "Null",
+				"data": data
+			}
+			return jsonify(response)
+		elif (keyword != None or keyword != "") and page+1 == total_page_yes_filter:
 			response = {
 				"nextPage": "Null",
 				"data": data
@@ -110,7 +122,7 @@ def get_attractions():
 	except Exception:
 		response = {
 			"error": True,
-			"message": "請輸入正確的字串"
+			"message": "內部伺服器錯誤"
 		}
 		return jsonify(response), 500
 	
@@ -165,11 +177,11 @@ def get_attraction_id(attractionId):
 
 # 旅遊景點分類
 @app.route("/api/categories")
-def list_filter():
+def list_categories():
 	try:
 		search_query = "SELECT category FROM attractions GROUP BY category ORDER BY category DESC"
 		mycursor.execute = (search_query)
-		found_data = mycursor.fetchone()
+		found_data = mycursor.fetchall()
 
 		if not mycursor.rowcount:
 			response = {
@@ -188,5 +200,4 @@ def list_filter():
 		mycursor.close()
 
 
-app.run(port=3000)
-
+app.run(host="0.0.0.0", port=3000, debug=True)

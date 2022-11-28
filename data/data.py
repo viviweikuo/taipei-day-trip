@@ -37,9 +37,9 @@ for i in range(len(data_tuple)):
     word2 = ".flv"
     data["file"] = [ elements for elements in data["file"] if word1 not in elements ]
     data["file"] = [ elements for elements in data["file"] if word2 not in elements ]
-
-    # list to json
-    data["file"] = json.dumps(data["file"])
+    # 3. list to string
+    # TODO: 刪除資料庫內容 > 修改下面語法 > 重新置入
+    data["file"] = ",".join(data["file"])
 
     # 存到資料庫中
     attraction_add = "INSERT INTO attractions(id, name, category, description, address, transport, mrt, lat, lng, images) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"

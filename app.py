@@ -87,12 +87,18 @@ def get_attractions():
 				"mrt": result[6],
 				"lat": str(result[7]),
 				"lng": str(result[8]),
-				"images": result[9]
+				"images": result[9].split(",")
 			})
 
 		if (keyword == None or keyword == "") and page+1 < total_page_no_filter:
 			response = {
 				"nextPage": int(page+1),
+				"data": data
+			}
+			return jsonify(response)
+		elif (keyword == None or keyword == "") and page+1 == total_page_no_filter:
+			response = {
+				"nextPage": None,
 				"data": data
 			}
 			return jsonify(response)
@@ -102,15 +108,9 @@ def get_attractions():
 				"data": data
 			}
 			return jsonify(response)
-		elif (keyword == None or keyword == "") and page+1 == total_page_no_filter:
-			response = {
-				"nextPage": "Null",
-				"data": data
-			}
-			return jsonify(response)
 		elif (keyword != None or keyword != "") and page+1 == total_page_yes_filter:
 			response = {
-				"nextPage": "Null",
+				"nextPage": None,
 				"data": data
 			}
 			return jsonify(response)
@@ -146,7 +146,7 @@ def get_attraction_id(attractionId):
 			"mrt": found_data[6],
 			"lat": str(found_data[7]),
 			"lng": str(found_data[8]),
-			"images": found_data[9]
+			"images": found_data[9].split(",")
 		})
 
 		response = {

@@ -236,7 +236,7 @@ def signup():
 		mycursor.execute(member_search, (member_new_email, ))
 		search_result = mycursor.rowcount
 
-		if search_result == None:
+		if search_result == 0:
 
 			member_add = "INSERT INTO member(name, email, password) VALUES(%s, %s, %s)"
 			value = (member_new_name, member_new_email, member_new_password)

@@ -1,17 +1,4 @@
 // sign-in
-function sendSigninData(){
-    let userEmail = document.querySelector(".login-email-input").value;
-    let userPassword = document.querySelector(".login-password-input").value;
-    let userData = {
-        "email": userEmail,
-        "password": userPassword
-        };
-    const request = new XMLHttpRequest();
-    request.open("PUT", "/api/user/auth");
-    request.send(userData);
-    memberSignin();
-}
-
 function memberSignin(){
     let errorMessage = document.querySelector(".login-error-message");
 
@@ -55,21 +42,6 @@ function memberSignin(){
 }
 
 // sign-up
-function sendSignupData(){
-    let userName = document.querySelector(".signup-name-input").value;
-    let userEmail = document.querySelector(".signup-email-input").value;
-    let userPassword = document.querySelector(".signup-password-input").value;
-    let userData = {
-        "name": userName,
-        "email": userEmail,
-        "password": userPassword
-        };
-    const request = new XMLHttpRequest();
-    request.open("POST", "/api/user");
-    request.send(userData);
-    memberSignup();
-}
-
 function memberSignup(){
     let errorMessage = document.querySelector(".signup-error-message")
 

@@ -1,5 +1,6 @@
 import mysql.connector
 import math
+import jwt
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -7,19 +8,26 @@ from flask import redirect
 from flask import url_for
 from flask import session
 from flask import jsonify
+from flask import make_response
+from functools import wraps
 
-app=Flask(__name__)
-app.config["JSON_AS_ASCII"]=False
-app.config["TEMPLATES_AUTO_RELOAD"]=True
+app=Flask(
+    __name__,
+    static_folder = "public",
+    static_url_path = "/"
+)
+app.config["JSON_AS_ASCII"] = False
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SECRET_KEY"] = "mob 100 is GOD."
 app.secret_key = "Gundam 00 is the best!!"
 
-# link to the database & create a cursor object
-attractions = mysql.connector.connect(
-    host = "0.0.0.0",
-    user = "root",
-    password = "zxcvbnmM12*",
-    database = "taipei_day_trip"
-)
+# link to the database
+dbconfig = {
+	"host":"0.0.0.0",
+    "user":"root",
+    "password":"zxcvbnmM12*",
+    "database":"taipei_day_trip",
+}
 
 # Pages
 @app.route("/")
@@ -38,8 +46,10 @@ def thankyou():
 # 取得景點資料: 算出總頁數 / 每頁12筆
 @app.route("/api/attractions")
 def get_attractions():
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+	
 	try:
-		mycursor = attractions.cursor(buffered=True)
 		page = request.args.get("page", type=int)
 		keyword = request.args.get("keyword", type=str)
 		per_page = 12
@@ -115,7 +125,7 @@ def get_attractions():
 			}
 			return jsonify(response)
 	
-	except Exception:
+	except:
 		response = {
 			"error": True,
 			"message": "內部伺服器錯誤"
@@ -124,13 +134,16 @@ def get_attractions():
 	
 	finally:
 		mycursor.close()
+		attractions.close()
 
 # 根據景點編號取得景點資料
 @app.route("/api/attraction/<int:attractionId>")
 def get_attraction_id(attractionId):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+	
 	try:
 		# search by id
-		mycursor = attractions.cursor(buffered=True)
 		search_query = "SELECT * FROM attractions WHERE id = %s"
 		mycursor.execute(search_query, (attractionId, ))
 		found_data = mycursor.fetchone()
@@ -171,12 +184,15 @@ def get_attraction_id(attractionId):
 
 	finally:
 		mycursor.close()
+		attractions.close()
 
 # 旅遊景點分類
 @app.route("/api/categories")
 def list_categories():
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+	
 	try:
-		mycursor = attractions.cursor(buffered=True)
 		search_query = "SELECT category FROM attractions GROUP BY category ORDER BY category DESC"
 		mycursor.execute(search_query)
 		found_data = mycursor.fetchall()
@@ -196,5 +212,154 @@ def list_categories():
 			
 	finally:
 		mycursor.close()
+		attractions.close()
 
-app.run(host="0.0.0.0", port=3000, debug=True)
+# 註冊
+@app.route("/api/user", methods=["POST"])
+def signup():
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	user_data = request.get_json() 
+	member_new_name = user_data["name"]
+	member_new_email = user_data["email"]
+	member_new_password = user_data["password"]
+
+	data = {
+		"name": member_new_name,
+		"email": member_new_email,
+		"password": member_new_password
+	}
+
+	try:
+		member_search = "SELECT email FROM member WHERE email = %s"
+		mycursor.execute(member_search, (member_new_email, ))
+		search_result = mycursor.rowcount
+
+		if search_result == None:
+
+			member_add = "INSERT INTO member(name, email, password) VALUES(%s, %s, %s)"
+			value = (member_new_name, member_new_email, member_new_password)
+			mycursor.execute(member_add, value)
+			attractions.commit()
+
+			response = { 
+				"ok": True
+				}
+			return jsonify(response)
+
+		if search_result > 0:
+			response = { 
+				"error": True,
+				"message": "該信箱已經被註冊"
+				}
+			return jsonify(response), 400
+		else:
+			response = {
+				"error": True,
+				"message": "內部伺服器錯誤"
+			}
+			return jsonify(response), 500
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 取得會員資訊
+@app.route("/api/user/auth", methods=["GET"])
+def check_member():
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	try:
+		if "Cookie" in request.headers:
+			user_cookie = request.cookies.get("token")
+			user_token = jwt.decode(user_cookie, app.config["SECRET_KEY"], algorithms = "HS256")
+		else:
+			# session["login"] = False
+			response = {
+					"data": None
+				}
+			return jsonify(response)
+
+		member_search = "SELECT * FROM member WHERE email = %s"
+		member_email = user_token["email"]
+		mycursor.execute(member_search, (member_email, ))
+		search_result = mycursor.rowcount
+		search_result_data = mycursor.fetchone()
+
+		if search_result == 1:
+			# session["login"] = True
+			data = {
+				"id": search_result_data[0],
+				"name": search_result_data[1],
+				"email": search_result_data[2],
+			}
+
+			response = {
+				"data": data
+			}
+			return jsonify(response)
+		
+		# session["login"] = False
+		response = {
+				"data": None
+			}
+		return jsonify(response)
+	
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 登入
+@app.route("/api/user/auth", methods=["PUT"])
+def signin(): 
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	user_data = request.get_json()
+	member_email = user_data["email"]
+	member_password = user_data["password"]
+
+	try:
+		member_search = "SELECT email FROM member WHERE email = %s AND password = %s"
+		mycursor.execute(member_search, (member_email, member_password, ))
+		search_result = mycursor.rowcount
+
+		if search_result == 1:
+			# session["login"] = True
+			user_token = jwt.encode(user_data, app.config["SECRET_KEY"], algorithm = "HS256")
+			response = jsonify({ "ok": True })
+			resp_cookie = make_response(response)
+			resp_cookie.set_cookie(key="token", value=user_token, max_age=604800)
+			return resp_cookie
+
+		if search_result != 1:
+			response = { 
+				"error": True,
+				"message": "帳號或密碼錯誤"
+				}
+			return jsonify(response), 400
+		else:
+			response = {
+				"error": True,
+				"message": "內部伺服器錯誤"
+			}
+			return jsonify(response), 500
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 登出
+@app.route("/api/user/auth", methods=["DELETE"])
+def signout():
+
+	# session["login"] = False
+	response = jsonify({ "ok": True })
+	del_cookie = make_response(response)
+	del_cookie.set_cookie(key="token", value="", expires=0)
+	del_cookie.delete_cookie("token")
+	return del_cookie
+
+app.run(host="0.0.0.0", port=3000)

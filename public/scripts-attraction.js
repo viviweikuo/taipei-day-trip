@@ -51,10 +51,11 @@ function fetchAttractionData(){
                 attractionImageBoxSub.classList.add("attraction-image-box");
                 attractionImageBoxSub.classList.add("slide");
                 attractionImageBoxSub.classList.add("fade");
+                // attractionImageBoxSub.style.width = "auto";
 
                 let attractionImage = document.createElement("img");
                 attractionImage.classList.add("attraction-image");
-                attractionImage.style.width = "100%";
+                // attractionImage.style.width = "100%";
                 attractionImage.src = attraction.data.images[i];
 
                 attractionImageBoxSub.appendChild(attractionImage);
@@ -131,3 +132,20 @@ function dotsPlay(){
 
     dots_array[slideIndex-1].className += " dot-active";
 }
+function setDateMin(){
+    let today = new Date();
+    let yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1;
+    let dd = today.getDate();
+
+    if (dd < 10){
+        dd = "0" + dd;
+    }
+    if (mm < 10){
+        mm = "0" + mm;
+    }
+
+    today = yyyy + "-" + mm + "-" + dd;
+    document.querySelector(".date-input-box").setAttribute("min", today);
+}
+setDateMin();

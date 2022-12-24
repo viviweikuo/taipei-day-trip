@@ -17,6 +17,10 @@ body{
 
 }
 
+a{
+    text-decoration: none;
+}
+
 nav{
     width: 1200px;
     max-width: 1920px;
@@ -228,7 +232,8 @@ nav{
     justify-content: center;
 }
 
-/* 登入&註冊 */
+/* attraction info */
+
 .top-part{
     margin-left: 10px;
     margin-right: 10px;
@@ -254,11 +259,25 @@ nav{
     height: 406px;
 
     position: relative;
+
+    border-radius: 5px;
+
+    overflow: hidden;
+}
+
+.attraction-image-box{
+    width: 540px;
+    height: 406px;
+
+    border-radius: 5px;
+
+    overflow: hidden;
 }
 
 .attraction-image{
-    width: 540px;
-    height: 406px;
+    width: 100%;
+    height: 100%;
+
 
     border: none;
     border-radius: 5px;
@@ -269,6 +288,8 @@ nav{
 .attraction-image > img{
     object-fit: contain;
     object-position: center;
+
+    border-radius: 5px;
 }
 
 /* hide images by default from w3s */
@@ -424,12 +445,32 @@ nav{
 
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .product-booking-time{
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+}
+
+.date-input-box{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 30px;
+
+    border: none;
+
+    border-radius: 3px;
+}
+
+.date-input-box[type=date]::-webkit-calendar-picker-indicator{
+    position: relative;
+    left: 20px;
+
+    background-image: url(icon_calendar.png);
+    background-repeat: no-repeat;
 }
 
 .product-booking-period{
@@ -615,7 +656,7 @@ nav{
     color: #FFFFFF;
 }
 
-/* 600~1200 */
+/* 1000~1200 */
 @media (max-width: 1200px){
 
     /* nav bar */
@@ -628,16 +669,27 @@ nav{
     }
     
     .images-container{
-        width: auto;
-
+        margin-top: 85px;
         margin-right: 10px;
-        padding-bottom: 50px;
+        padding-top: 20px;
     }
     
     .images-container-box{
         width: auto;
+        height: auto;
+    }
+
+    .attraction-image-box{
+        width: auto;
         max-width: 490px;
         height: 350px;
+
+        overflow: hidden;
+    }
+
+    .attraction-image{
+        width: 130%;
+        height: auto;
     }
     
     .product-booking-container{
@@ -719,25 +771,36 @@ nav{
     }
 
     .images-container {
-        margin-top: 30px;
+        margin-top: 20px;
         margin-right: 0px;
-        padding-bottom: 20px;
+    }
+
+    .images-container-box{
+        width: auto;
+        height: auto;
+    }
+
+    .attraction-image-box{
+        width: 490px;
+        height: 360px;
+
+        overflow: hidden;
     }
 
     .attraction-image{
-        width: 540px;
-        height: 406px;
+        width: 120%;
+        height: auto;
     }
 
     .dots-box{
-        bottom: -10px;
+        bottom: 30px;
     }
 
     .product-booking-container{
         width: auto;
         width: 540px;
 
-        margin-top: 50px;
+        margin-top: 20px;
         margin-left: 0px;
     }
 
@@ -800,12 +863,22 @@ nav{
         justify-content: center;
     }
 
-    .attraction-image{
-        display: flex;
-        justify-content: center;
+    .images-container-box{
+        width: auto;
+        height: auto;
+    }
 
-        width: 80vw;
-        height: 350px;
+    .attraction-image-box{
+        width: 85vw;
+        max-width: 470px;
+        height: 360px;
+
+        overflow: hidden;
+    }
+
+    .attraction-image{
+        width: 170%;
+        height: auto;
     }
 
     .btn-prev{
@@ -827,7 +900,6 @@ nav{
     .product-booking-container{
         width: 85vw;
         min-height: 350px;
-        min-width: 360px;
 
         margin-top: 30px;
 
@@ -849,7 +921,6 @@ nav{
         width: 85vw;
         height: 315px;
         max-width: 466px;
-        min-width: 330px;
 
         border: 20px;
     }
@@ -868,7 +939,7 @@ nav{
 
     /* 登入&註冊 */
     .background-layer{
-        width: 120%;
+        width: 110%;
         max-width: 600px;
     }
 
@@ -905,30 +976,41 @@ nav{
     
     .images-container{
         padding-bottom: 0px;
+        padding-top: 0px;
 
         display: flex;
         justify-content: center;
     }
 
-    .attraction-image{
-        display: flex;
-        justify-content: center;
+    .images-container-box{
+        width: auto;
+        height: auto;
+    }
 
-        width: 80vw;
-        max-width: 360px;
-        height: 350px;
+    .attraction-image-box{
+        width: 470px;
+        height: 360px;
+
+        overflow: hidden;
+    }
+    
+    .attraction-image{
+        width: 150%;
+        height: auto;
+
+        border-radius: 5px;
     }
 
     .btn-prev{
         position: absolute;
         top: 160px;
-        left: 15px;
+        left: 75px;
     }
     
     .btn-next{
         position: absolute;
         top: 160px;
-        right: 15px;
+        right: 75px;
     }
 
     .dots-box{
@@ -940,7 +1022,7 @@ nav{
         min-height: 350px;
         max-width: 350px;
 
-        margin-top: 30px;
+        margin-top: 15px;
 
         display: flex;
         justify-content: center;
@@ -964,12 +1046,8 @@ nav{
     .product-booking-detail{
         width: 85vw;
         height: 315px;
-        max-width: 466px;
-        min-width: 330px;
 
         border: 20px;
-
-        margin-left: 10px;
     }
 
     .product-booking-btn{
@@ -981,16 +1059,13 @@ nav{
     }
 
     .bottom-part{
-        width: 340px;
-        margin-left: 10px;
+        width: 350px;
+
+        align-items: center;
     }
 
     .product-introduction-container{
         max-width: 320px;
-    }
-
-    .footer{
-        width: 100%;
     }
 
     /* 登入&註冊 */
@@ -1003,3 +1078,4 @@ nav{
         left: 3%;
     }
 }
+

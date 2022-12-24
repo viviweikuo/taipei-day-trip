@@ -33,7 +33,6 @@ function memberSignin(){
 
                 let signinPopForm = document.querySelector(".login-popup");
                 signinPopForm.style.height = "300px";
-
             }
         })
         .catch((error) => {
@@ -53,7 +52,7 @@ function memberSignup(){
         "email": userEmail,
         "password": userPassword
         };
-    
+
     fetch("http://18.213.194.28:3000/api/user", {
         method: "POST",
         body: JSON.stringify(userData),
@@ -111,6 +110,15 @@ function checkLogin(){
                 logoutButton.style.display = "block";
                 logoutButton.classList.remove("hide-content");
                 logoutButton.classList.add("open-content");
+
+                // booking page
+                let userName = result.data["name"];
+                let userNameBox = document.querySelector(".user-name");
+                userNameBox.innerHTML = userName;
+                let nameInputTarget = document.querySelector(".contact-information-name-input");
+                nameInputTarget.value = result.data["name"];
+                let emailInputTarget = document.querySelector(".contact-information-email-input");
+                emailInputTarget.value = result.data["email"];
             }
         })
         .catch((error) => {

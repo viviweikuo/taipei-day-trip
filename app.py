@@ -276,7 +276,6 @@ def check_member():
 			user_cookie = request.cookies.get("token")
 			user_token = jwt.decode(user_cookie, app.config["SECRET_KEY"], algorithms = "HS256")
 		else:
-			# session["login"] = False
 			response = {
 					"data": None
 				}
@@ -289,7 +288,6 @@ def check_member():
 		search_result_data = mycursor.fetchone()
 
 		if search_result == 1:
-			# session["login"] = True
 			data = {
 				"id": search_result_data[0],
 				"name": search_result_data[1],
@@ -301,7 +299,6 @@ def check_member():
 			}
 			return jsonify(response)
 		
-		# session["login"] = False
 		response = {
 				"data": None
 			}
@@ -327,7 +324,6 @@ def signin():
 		search_result = mycursor.rowcount
 
 		if search_result == 1:
-			# session["login"] = True
 			user_token = jwt.encode(user_data, app.config["SECRET_KEY"], algorithm = "HS256")
 			response = jsonify({ "ok": True })
 			resp_cookie = make_response(response)
@@ -354,12 +350,187 @@ def signin():
 # 登出
 @app.route("/api/user/auth", methods=["DELETE"])
 def signout():
-
-	# session["login"] = False
 	response = jsonify({ "ok": True })
 	del_cookie = make_response(response)
 	del_cookie.set_cookie(key="token", value="", expires=0)
 	del_cookie.delete_cookie("token")
 	return del_cookie
+
+# 登入驗證
+def check_token(func):
+	@wraps(func)
+	def decorated(*args, **kwargs):
+		attractions = mysql.connector.connect(**dbconfig)
+		mycursor = attractions.cursor(buffered=True)
+
+		cookie = None
+		
+		if "Cookie" in request.headers:
+			cookie = request.cookies.get("token")
+		if not cookie:
+			return jsonify({"error": True, "message": "請登入系統"}), 403
+
+		try:
+			token = jwt.decode(cookie, app.config["SECRET_KEY"], algorithms = "HS256")
+			user_search = "SELECT * FROM member WHERE email = %s AND password = %s"
+			mycursor.execute(user_search, (token["email"], token["password"],))
+			search_result = mycursor.rowcount
+			current_user = mycursor.fetchone()
+			current_user = list(current_user)
+
+			if search_result == 0:
+				return jsonify({"error": True, "message": "請重新登入，並輸入正確的帳號或密碼"}), 403
+		
+		except:
+			return jsonify({"error": True, "message": "請重新登入系統"}), 403
+
+		finally:
+			mycursor.close()
+			attractions.close()
+
+		return func(current_user, *args, **kwargs)
+
+	return decorated
+
+# 選擇行程: 購物車
+@app.route("/api/booking", methods=["GET"])
+@check_token
+def booking_car(current_user):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	user_id = current_user[0]
+	
+	try:
+		booking_search = "SELECT attraction_id, date, time, price FROM booking WHERE user_id = %s"
+		mycursor.execute(booking_search, (user_id, ))
+		booking_search = mycursor.rowcount
+		booking_search_result = mycursor.fetchone()
+
+		if booking_search_result != None:
+			booking_search_result = list(booking_search_result)
+			attraction_id = booking_search_result[0]
+		else:
+			response = {
+				"data": None
+			}
+			return jsonify(response)
+
+		attraction_search = "SELECT id, name, address, images FROM attractions WHERE id = %s"
+		mycursor.execute(attraction_search, (attraction_id, ))
+		attraction_search_result = mycursor.fetchone()
+
+		if attraction_search_result != None:
+			attraction_search_result = list(attraction_search_result)
+			attraction_search_result[3] = attraction_search_result[3].split(",")
+
+			attraction = {
+				"id": attraction_search_result[0],
+				"name": attraction_search_result[1],
+				"address": attraction_search_result[2],
+				"images": attraction_search_result[3][0],
+			}
+
+			data = {
+				"attraction": attraction,
+				"date": booking_search_result[1],
+				"time": booking_search_result[2],
+				"price": booking_search_result[3]
+			}
+
+			response = {
+				"data": data
+			}
+			return jsonify(response)
+
+		response = {
+			"data": None
+		}
+		return jsonify(response)
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 建立行程: "開始預約行程" button
+@app.route("/api/booking", methods=["POST"])
+@check_token
+def new_booking(current_user):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	booking_data = request.get_json() 
+	booking_attraction_id = booking_data["attractionId"]
+	booking_date = booking_data["date"]
+	booking_time = booking_data["time"]
+	booking_price = booking_data["price"]
+	booking_user_id = current_user[0]
+
+	try:
+		check_booking_data = "SELECT * FROM booking WHERE user_id = %s"
+		mycursor.execute(check_booking_data, (booking_user_id, ))
+		search_result = mycursor.rowcount
+
+		if search_result != 0:
+			update_booking ="UPDATE booking SET attraction_id = %s, date = %s, time = %s, price = %s WHERE user_id = %s"
+			update_value = (booking_attraction_id, booking_date, booking_time, booking_price, booking_user_id)
+			mycursor.execute(update_booking, update_value)
+			attractions.commit()
+		else:
+			add_new_booking = "INSERT INTO booking(attraction_id, user_id, date, time, price) VALUES(%s, %s, %s, %s, %s)"
+			add_value = (booking_attraction_id, booking_user_id, booking_date, booking_time, booking_price)
+			mycursor.execute(add_new_booking, add_value)
+			attractions.commit()
+
+		confirm_booking_data = "SELECT * FROM booking WHERE attraction_id = %s AND user_id = %s"
+		confirm_value = (booking_attraction_id, booking_user_id)
+		mycursor.execute(confirm_booking_data, confirm_value)
+		confirm_result = mycursor.rowcount
+
+		if confirm_result == 1:
+			response = {
+				"ok": True
+			}
+			return jsonify(response)
+
+		response = {
+			"error": True,
+			"message": "預約失敗，請重新嘗試"
+		}
+		return jsonify(response), 400
+
+	except:
+		response = {
+			"error": True,
+			"message": "內部伺服器錯誤"
+		}
+		return jsonify(response), 500
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 刪除行程
+@app.route("/api/booking", methods=["DELETE"])
+@check_token
+def del_booking(current_user):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	booking_user_id = current_user[0]
+
+	try:
+		delete_booking = "DELETE FROM booking WHERE user_id = %s"
+		mycursor.execute(delete_booking, (booking_user_id, ))
+		attractions.commit()
+
+		response = {
+			"ok": True
+		}
+		return jsonify(response)
+
+	finally:
+		mycursor.close()
+		attractions.close()
 
 app.run(host="0.0.0.0", port=3000)

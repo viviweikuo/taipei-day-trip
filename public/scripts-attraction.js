@@ -1,10 +1,9 @@
-
 let attractionPath = location.pathname;
 let attractionId = attractionPath.replace("/attraction/", "");
 
 function fetchAttractionData(){
 
-    fetch("http://18.213.194.28:3000/api/attraction/"+attractionId)
+    fetch("http://127.0.0.1:3000/api/attraction/"+attractionId)
     .then((response) => {
         return response.json();
     })
@@ -121,10 +120,7 @@ function showSlide(n){
 function dotsPlay(){
     
     let dots = document.getElementsByClassName("dot");
-    console.log(dots);
-
     let dots_array = Array.from(dots);
-    console.log(dots_array);
 
     for (let j = 0 ; j < dots_array.length ; j++){
         dots_array[j].className = dots_array[j].className.replace(" dot-active", "");

@@ -1,6 +1,6 @@
 function goBookingCar(){
 
-    fetch("http://18.213.194.28:3000/api/user/auth", {
+    fetch("http://127.0.0.1:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -10,11 +10,11 @@ function goBookingCar(){
         .then((result) => {
             if (result.data == null){
                 let membershipForm = document.querySelector(".membership-container");
-                membershipForm.classList.remove("hide-content");
-                membershipForm.classList.add("open-content");
+                membershipForm.style.removeProperty("display");
+                membershipForm.style.display = "block";
                 let backgroundGray = document.querySelector(".background-layer");
-                backgroundGray.classList.remove("hide-content");
-                backgroundGray.classList.add("open-content");
+                backgroundGray.style.removeProperty("display");
+                backgroundGray.style.display = "block";
             } else {
                 location.replace("/booking");
             }
@@ -26,7 +26,7 @@ function goBookingCar(){
 
 function fetchBookingInfo(){
 
-    fetch("http://18.213.194.28:3000/api/booking")
+    fetch("http://127.0.0.1:3000/api/booking")
         .then((response) => {
             return response.json();
         })
@@ -36,23 +36,17 @@ function fetchBookingInfo(){
             let bookingBox = document.querySelector(".booking-content");
             let noBookingBox = document.querySelector(".no-booking-content");
             if (booking.data != null){
-
                 noBookingBox.classList.remove("open-content");
                 noBookingBox.classList.add("hide-content");
 
                 bookingBox.classList.add("open-content");
                 bookingBox.classList.remove("hide-content");
-
-                
             } else {
-
                 bookingBox.classList.remove("open-content");
                 bookingBox.classList.add("hide-content");
                 
                 noBookingBox.classList.remove("hide-content");
                 noBookingBox.classList.add("open-content");
-
-                
             }
             
             // img
@@ -78,7 +72,7 @@ function fetchBookingInfo(){
                 bookingTime.textContent = "上午 09:00 - 12:00";
             }
             if (booking.data.time == "afternoon"){
-                bookingTime.textContent = "下午 01:00 - 4:00";
+                bookingTime.textContent = "下午 01:00 - 04:00";
             }
             // price
             let bookingPrice = document.querySelector(".booking-price-body");
@@ -116,7 +110,7 @@ function bookSchedule(){
         "price": bookingPrice
     }
     
-    fetch("http://18.213.194.28:3000/api/booking", {
+    fetch("http://127.0.0.1:3000/api/booking", {
         method: "POST",
         body: JSON.stringify(bookingData),
         headers: {
@@ -128,11 +122,11 @@ function bookSchedule(){
             console.log(response);
             if (response.status == 403){
                 let membershipForm = document.querySelector(".membership-container");
-                membershipForm.classList.remove("hide-content");
-                membershipForm.classList.add("open-content");
+                membershipForm.style.removeProperty("display");
+                membershipForm.style.display = "block";
                 let backgroundGray = document.querySelector(".background-layer");
-                backgroundGray.classList.remove("hide-content");
-                backgroundGray.classList.add("open-content");
+                backgroundGray.style.removeProperty("display");
+                backgroundGray.style.display = "block";
             }
             return response.json();
         })
@@ -149,7 +143,7 @@ function bookSchedule(){
 
 function goConfirmBooking(){
 
-    fetch("http://18.213.194.28:3000/api/user/auth", {
+    fetch("http://127.0.0.1:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -170,7 +164,7 @@ function goConfirmBooking(){
 
 function deleteSchedule(){
 
-    fetch("http://18.213.194.28:3000/api/booking", {
+    fetch("http://127.0.0.1:3000/api/booking", {
         method: "DELETE",
         headers: {
             "content-type": "application/json",

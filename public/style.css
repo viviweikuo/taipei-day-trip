@@ -19,6 +19,8 @@ body{
 
 a{
     text-decoration: none;
+
+    cursor: pointer;
 }
 
 nav{
@@ -68,17 +70,19 @@ nav{
 
 .logout-btn{
     display: none;
+
+    cursor: pointer;
 }
 
 .background-layer{
     margin: auto;
 
-    max-width: auto;
-    height: 3840px;
+    /* max-width: auto;
+    height: auto; */
     background: rgba(0,0,0,0.5);
     overflow: hidden;
 
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
@@ -106,7 +110,7 @@ nav{
     border-top-right-radius: 6px;
 }
 
-.close-btn{
+.login-close-btn{
     width: 16px;
     height: 16px;
 
@@ -118,6 +122,24 @@ nav{
     z-index: 2;
     left: 306px;
     top: 17px;
+
+    cursor: pointer;
+}
+
+.signup-close-btn{
+    width: 16px;
+    height: 16px;
+
+    background-image: url(icon_close.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+    position: relative;
+    z-index: 2;
+    left: 306px;
+    top: 17px;
+
+    cursor: pointer;
 }
 
 .open-form{
@@ -196,6 +218,8 @@ nav{
     font-size: 19px;
     line-height: 16px;
     color: #FFFFFF;
+
+    cursor: pointer;
 }
 
 .error-message{
@@ -223,6 +247,22 @@ nav{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.booking-schedule-btn{
+    cursor: pointer;
+}
+
+.signin-signup-btn{
+    cursor: pointer;
+}
+
+.change-signin-to-signup{
+    cursor: pointer;
+}
+
+.change-signup-to-signin{
+    cursor: pointer;
 }
 
 /* 登入&註冊 */
@@ -367,6 +407,8 @@ nav{
     background-repeat: no-repeat;
     background-size: 30px 30px;
     background-position: center;
+
+    cursor: pointer;
 }
 
 .dropdown-menu-container{
@@ -637,8 +679,8 @@ nav{
 
     /* 登入&註冊 */
     .background-layer{
-        width: 120%;
-        max-width: 1200px;
+        /* width: 120%;
+        max-width: 1200px; */
     }
 
     .membership-container{
@@ -742,8 +784,8 @@ nav{
     /* 登入&註冊 */
 
     .background-layer{
-        width: 120%;
-        max-width: 600px;
+        /* width: 120%;
+        max-width: 600px; */
     }
 
     .membership-container{

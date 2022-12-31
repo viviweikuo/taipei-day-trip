@@ -1,6 +1,11 @@
 import mysql.connector
 import math
 import jwt
+import time
+import requests
+import json
+import datetime
+from datetime import datetime
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -23,7 +28,8 @@ app.secret_key = "Gundam 00 is the best!!"
 
 # link to the database
 dbconfig = {
-	"host":"0.0.0.0",
+	# TODO: "host":"0.0.0.0",
+	"host":"localhost",
     "user":"root",
     "password":"zxcvbnmM12*",
     "database":"taipei_day_trip",
@@ -60,7 +66,6 @@ def get_attractions():
 			mycursor.execute(search_no_filter)
 			total_rows_no_filter = mycursor.fetchone()
 			total_page_no_filter = math.ceil(total_rows_no_filter[0] / per_page)
-			print(total_page_no_filter)
 		else:
 			# total pages with filter
 			search_yes_filter = "SELECT COUNT(*) FROM attractions WHERE category = %s OR name LIKE %s"
@@ -68,7 +73,6 @@ def get_attractions():
 			mycursor.execute(search_yes_filter, search_val)
 			total_rows_yes_filter = mycursor.fetchone()
 			total_page_yes_filter = math.ceil(total_rows_yes_filter[0] / per_page)
-			print(total_page_yes_filter)
 
 		if (keyword == None) or (keyword == ""):
 			# fetch data without filter
@@ -472,7 +476,7 @@ def new_booking(current_user):
 		search_result = mycursor.rowcount
 
 		if search_result != 0:
-			update_booking ="UPDATE booking SET attraction_id = %s, date = %s, time = %s, price = %s WHERE user_id = %s"
+			update_booking = "UPDATE booking SET attraction_id = %s, date = %s, time = %s, price = %s WHERE user_id = %s"
 			update_value = (booking_attraction_id, booking_date, booking_time, booking_price, booking_user_id)
 			mycursor.execute(update_booking, update_value)
 			attractions.commit()
@@ -517,11 +521,9 @@ def del_booking(current_user):
 	attractions = mysql.connector.connect(**dbconfig)
 	mycursor = attractions.cursor(buffered=True)
 
-	booking_user_id = current_user[0]
-
 	try:
 		delete_booking = "DELETE FROM booking WHERE user_id = %s"
-		mycursor.execute(delete_booking, (booking_user_id, ))
+		mycursor.execute(delete_booking, (current_user[0], ))
 		attractions.commit()
 
 		response = {
@@ -533,4 +535,171 @@ def del_booking(current_user):
 		mycursor.close()
 		attractions.close()
 
-app.run(host="0.0.0.0", port=3000)
+# 付款: 建立訂單，完成付款程序
+@app.route("/api/orders", methods=["POST"])
+@check_token
+def payment(current_user):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	order_data = request.get_json()
+
+	if "" or None not in order_data.values():
+		customer_id = current_user[0]
+		order_no = str("%03d" % current_user[0]) + str(time.strftime("%Y%m%d%H%M%S", time.localtime(time.time())) + str(time.time()).replace(".","")[-7:])
+		prime = order_data["prime"]
+		order_price = order_data["order"]["price"]
+		attraction_id = order_data["order"]["trip"]["attraction"]["id"]
+		attraction_name = order_data["order"]["trip"]["attraction"]["name"]
+		attraction_address = order_data["order"]["trip"]["attraction"]["address"]
+		attraction_image = order_data["order"]["trip"]["attraction"]["image"]
+		trip_date = order_data["order"]["trip"]["date"]
+		trip_time = order_data["order"]["trip"]["time"]
+		contact_name = order_data["order"]["contact"]["name"]
+		contact_email = order_data["order"]["contact"]["email"]
+		contact_phone = order_data["order"]["contact"]["phone"]
+		pay_done = "尚未付款"
+
+		add_order = "INSERT INTO order_history(customer_id, order_no, order_price, attraction_id, attraction_name, attraction_address, attraction_image, trip_date, trip_time, contact_name, contact_email, contact_phone, pay_done) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+		add_order_value = (customer_id, order_no, order_price, attraction_id, attraction_name, attraction_address, attraction_image, trip_date, trip_time, contact_name, contact_email, contact_phone, pay_done)
+		mycursor.execute(add_order, add_order_value)
+		attractions.commit()
+	else:
+		response = {
+			"error": True,
+			"message": "訂單建立失敗，請確認資料是否正確、填妥"
+		}
+		return jsonify(response), 400
+
+	try:
+		url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+		headers = {
+			"methods": "POST",
+			"content-type": "application/json",
+			"x-api-key": "partner_Jl9j17qoPXMmavyDhq6MFIWWhgYIvvJUdEzV8rKIoHwjA5VdFyVmS1UN"
+		}
+		params = {
+			"prime": prime,
+			"partner_key": "partner_Jl9j17qoPXMmavyDhq6MFIWWhgYIvvJUdEzV8rKIoHwjA5VdFyVmS1UN",
+			"amount": order_price,
+			"merchant_id": "MinnieCheng_CTBC",
+			"details": order_no,
+			"cardholder": {
+				"phone_number": "+886" + contact_phone[1:len(contact_phone)],
+				"name": contact_name,
+				"email": contact_email,
+				"zip_code": "",
+				"address": "",
+				"national_id": ""
+			},
+			"remember": False
+		}
+
+		response = requests.post(url, headers=headers, params=params)
+		result = response.json()
+		print(result)
+
+		if result["status"] == 0:
+			pay_done = "付款完成"
+			update_order = "UPDATE order_history SET order_status = %s, pay_done = %s WHERE order_no = %s"
+			update_order_value = (result["status"], pay_done, order_no)
+			mycursor.execute(update_order, update_order_value)
+			attractions.commit()
+
+			response = {
+				"data": {
+					"number": order_no,
+					"payment": {
+						"status": result["status"],
+						"message": "付款成功"
+					}
+				}
+			}
+			return jsonify(response)
+
+		if result["status"] > 0:
+			update_order = "UPDATE order_history SET order_status = %s WHERE order_no = %s"
+			update_order_value = (result["status"], order_no)
+			mycursor.execute(update_order, update_order_value)
+			attractions.commit()
+
+			response = {
+				"data": {
+					"number": order_no,
+					"payment": {
+						"status": result["status"],
+						"message": "付款失敗，請重新嘗試"
+					}
+				}
+			}
+			return jsonify(response)
+
+	except:
+		response = {
+			"error": True,
+			"message": "內部伺服器錯誤"
+		}
+		return jsonify(response), 500
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# 查詢訂單: 依據訂單編號取得訂單資訊
+@app.route("/api/orders/<int:orderNumber>")
+@check_token
+def get_order(current_user, orderNumber):
+	attractions = mysql.connector.connect(**dbconfig)
+	mycursor = attractions.cursor(buffered=True)
+
+	try:
+		get_order = "SELECT * FROM order_history WHERE customer_id = %s and order_no = %s"
+		get_order_value = (current_user[0], orderNumber)
+		mycursor.execute(get_order, get_order_value)
+		get_result = mycursor.fetchone()
+
+		if get_result is not None:
+			data = {
+				"number": get_result[1],
+				"price": get_result[2],
+				"trip": {
+					"attraction": {
+						"id": get_result[3],
+						"name": get_result[4],
+						"address": get_result[5],
+						"image": get_result[6]
+					},
+					"date": get_result[7].strftime("%Y-%m-%d"),
+					"time": get_result[8]
+				},
+				"contact": {
+					"name": get_result[9],
+					"email": get_result[10],
+					"phone": get_result[11]
+				},
+				"status": get_result[12]
+			}
+
+			response = {
+				"data": data
+			}
+			return jsonify(response)
+		else:
+			response = {
+				"data": None
+			}
+			return jsonify(response)
+
+	except:
+		response = {
+			"error": True,
+			"message": "內部伺服器錯誤"
+		}
+		return jsonify(response), 500
+
+	finally:
+		mycursor.close()
+		attractions.close()
+
+# TODO: app.run(host="0.0.0.0", port=3000)
+app.run(port=3000)

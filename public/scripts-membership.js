@@ -9,7 +9,7 @@ function memberSignin(){
         "password": userPassword
         };
 
-    fetch("http://18.213.194.28:3000/api/user/auth", {
+    fetch("http://127.0.0.1:3000/api/user/auth", {
         method: "PUT",
         body: JSON.stringify(userData),
         credentials: "include",
@@ -53,7 +53,38 @@ function memberSignup(){
         "password": userPassword
         };
 
-    fetch("http://18.213.194.28:3000/api/user", {
+    if (userName == "" || userName == null){
+        errorMessage.innerHTML = "請填入註冊姓名";
+        errorMessage.classList.remove("hide-content");
+        errorMessage.classList.add("open-content");
+        errorMessage.classList.add("error-message");
+
+        let signupPopForm = document.querySelector(".signup-popup");
+        signupPopForm.style.height = "345px";
+        return
+    }
+    if (userEmail == "" || userEmail == null){
+        errorMessage.innerHTML = "請填入註冊帳號";
+        errorMessage.classList.remove("hide-content");
+        errorMessage.classList.add("open-content");
+        errorMessage.classList.add("error-message");
+
+        let signupPopForm = document.querySelector(".signup-popup");
+        signupPopForm.style.height = "345px";
+        return
+    }
+    if (userPassword == "" || userPassword == null){
+        errorMessage.innerHTML = "請填入註冊密碼";
+        errorMessage.classList.remove("hide-content");
+        errorMessage.classList.add("open-content");
+        errorMessage.classList.add("error-message");
+
+        let signupPopForm = document.querySelector(".signup-popup");
+        signupPopForm.style.height = "345px";
+        return
+    }
+
+    fetch("http://127.0.0.1:3000/api/user", {
         method: "POST",
         body: JSON.stringify(userData),
         headers: {
@@ -83,7 +114,6 @@ function memberSignup(){
 
                 let signupPopForm = document.querySelector(".signup-popup");
                 signupPopForm.style.height = "345px";
-
             }
         })
         .catch((error) => {
@@ -94,7 +124,7 @@ function memberSignup(){
 // check login status
 function checkLogin(){
 
-    fetch("http://18.213.194.28:3000/api/user/auth", {
+    fetch("http://127.0.0.1:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -130,7 +160,7 @@ checkLogin();
 // log-out
 function logout(){
 
-    fetch("http://18.213.194.28:3000/api/user/auth", {
+    fetch("http://127.0.0.1:3000/api/user/auth", {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -160,33 +190,35 @@ function logout(){
 // close-form
 function toggleForm(){
     let membershipForm = document.querySelector(".membership-container"); 
-    membershipForm.classList.add("hide-content");
     let backgroundGray = document.querySelector(".background-layer");
-    backgroundGray.classList.add("hide-content");
 
     // click signin/signup btn
     let loginButton = document.querySelector(".signin-signup-btn");
-
     loginButton.addEventListener("click", () => {
-        membershipForm.classList.remove("hide-content");
-        membershipForm.classList.add("open-content");
-
-        backgroundGray.classList.remove("hide-content");
-        backgroundGray.classList.add("open-content");
+        membershipForm.style.removeProperty("display");
+        membershipForm.style.display = "block";
+        backgroundGray.style.removeProperty("display");
+        backgroundGray.style.display = "block";
     })
 
     // click close btn
-    let closeButton = document.querySelector(".close-btn");
+    let loginCloseButton = document.querySelector(".login-close-btn");
+    loginCloseButton.addEventListener("click", () => {
+        membershipForm.style.removeProperty("display");
+        membershipForm.style.display = "none";
+        backgroundGray.style.removeProperty("display");
+        backgroundGray.style.display = "none";
+    });
 
-    closeButton.addEventListener("click", () => {
-        membershipForm.classList.remove("open-content");
-        membershipForm.classList.add("hide-content");
-
-        backgroundGray.classList.remove("open-content");
-        backgroundGray.classList.add("hide-content");
-    }, true);
+    let signupCloseButton = document.querySelector(".signup-close-btn");
+    signupCloseButton.addEventListener("click", () => {
+        membershipForm.style.removeProperty("display");
+        membershipForm.style.display = "none";
+        backgroundGray.style.removeProperty("display");
+        backgroundGray.style.display = "none";
+    });
 }
-toggleForm();
+// toggleForm();
 
 // change-form
 function changeForm(){
@@ -232,3 +264,4 @@ function styleForm(){
     let signupPopForm = document.querySelector(".signup-popup");
     signupPopForm.style.height = "330px";
 }
+

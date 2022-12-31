@@ -19,6 +19,8 @@ body{
 
 a{
     text-decoration: none;
+
+    cursor: pointer;
 }
 
 nav{
@@ -75,6 +77,8 @@ nav{
 
 .logout-btn{
     display: none;
+
+    cursor: pointer;
 }
 
 .background-layer{
@@ -85,7 +89,7 @@ nav{
     background: rgba(0,0,0,0.5);
     overflow: hidden;
 
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
@@ -113,7 +117,7 @@ nav{
     border-top-right-radius: 6px;
 }
 
-.close-btn{
+.login-close-btn{
     width: 16px;
     height: 16px;
 
@@ -125,6 +129,24 @@ nav{
     z-index: 2;
     left: 306px;
     top: 17px;
+
+    cursor: pointer;
+}
+
+.signup-close-btn{
+    width: 16px;
+    height: 16px;
+
+    background-image: url(icon_close.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+    position: relative;
+    z-index: 2;
+    left: 306px;
+    top: 17px;
+
+    cursor: pointer;
 }
 
 .open-form{
@@ -203,6 +225,8 @@ nav{
     font-size: 19px;
     line-height: 16px;
     color: #FFFFFF;
+
+    cursor: pointer;
 }
 
 .error-message{
@@ -232,6 +256,21 @@ nav{
     justify-content: center;
 }
 
+.booking-schedule-btn{
+    cursor: pointer;
+}
+
+.signin-signup-btn{
+    cursor: pointer;
+}
+
+.change-signin-to-signup{
+    cursor: pointer;
+}
+
+.change-signup-to-signin{
+    cursor: pointer;
+}
 /* attraction info */
 
 .top-part{
@@ -471,6 +510,8 @@ nav{
 
     background-image: url(icon_calendar.png);
     background-repeat: no-repeat;
+
+    cursor: pointer;
 }
 
 .product-booking-period{
@@ -487,6 +528,8 @@ nav{
     margin-right: 5px;
 
     position: relative;
+
+    cursor: pointer;
 }
 
 .afternoon-schedule-box{
@@ -495,6 +538,8 @@ nav{
     margin-right: 5px;
 
     position: relative;
+
+    cursor: pointer;
 }
 
 .btn-on{
@@ -569,6 +614,8 @@ nav{
     flex: none;
     order: 0;
     flex-grow: 0;
+
+    cursor: pointer;
 }
 
 .horizon-line{

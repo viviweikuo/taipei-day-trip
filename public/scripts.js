@@ -9,7 +9,7 @@ function fetchData(){
 
     isLoading = true;
 
-	fetch("http://18.213.194.28:3000/api/attractions?page="+page+"&keyword="+keyword)
+	fetch("http://127.0.0.1:3000/api/attractions?page="+page+"&keyword="+keyword)
         .then((response) => {
             return response.json();
         })
@@ -26,7 +26,7 @@ function fetchData(){
         
                     // 1. 分寫網址 + 載入第一章圖片
                     let imgLinkElement = document.createElement("a");
-                    imgLinkElement.href = "http://18.213.194.28:3000/attraction/" + attractions.data[i].id;
+                    imgLinkElement.href = "http://127.0.0.1:3000/attraction/" + attractions.data[i].id;
         
                     let imgElement = document.createElement("img");
                     imgElement.classList.add("attractions-box-single-img");
@@ -37,7 +37,7 @@ function fetchData(){
                     
                     // 2. 景點名稱
                     let nameLinkElement = document.createElement("a");
-                    nameLinkElement.href = "http://18.213.194.28:3000/attraction/" + attractions.data[i].id;
+                    nameLinkElement.href = "http://127.0.0.1:3000/attraction/" + attractions.data[i].id;
         
                     let nameBoxElement = document.createElement("div");
                     nameBoxElement.classList.add("attractions-box-single-name-box");
@@ -77,7 +77,6 @@ function fetchData(){
                     nextPage = attractions.nextPage;
         
                     isLoading = false;
-        
                 }
             }
         })
@@ -117,7 +116,7 @@ function getSearchData(){
         keyword = document.querySelector(".search-attraction-input").value;
     }
 
-	fetch("http://18.213.194.28:3000/api/attractions?page="+page+"&keyword="+keyword)
+	fetch("http://127.0.0.1:3000/api/attractions?page="+page+"&keyword="+keyword)
         .then((response) => {
             return response.json();
         })
@@ -134,7 +133,7 @@ function getSearchData(){
         
                     // 1. 分寫網址 + 載入第一章圖片
                     let imgLinkElement = document.createElement("a");
-                    imgLinkElement.href = "http://18.213.194.28:3000/attraction/" + attractions.data[i].id;
+                    imgLinkElement.href = "http://127.0.0.1:3000/attraction/" + attractions.data[i].id;
         
                     let imgElement = document.createElement("img");
                     imgElement.classList.add("attractions-box-single-img");
@@ -145,7 +144,7 @@ function getSearchData(){
                     
                     // 2. 景點名稱
                     let nameLinkElement = document.createElement("a");
-                    nameLinkElement.href = "http://18.213.194.28:3000/attraction/" + attractions.data[i].id;
+                    nameLinkElement.href = "http://127.0.0.1:3000/attraction/" + attractions.data[i].id;
         
                     let nameBoxElement = document.createElement("div");
                     nameBoxElement.classList.add("attractions-box-single-name-box");
@@ -188,7 +187,6 @@ function getSearchData(){
                     keyword = keyword;
         
                     isLoading = false;
-        
                 }
             }
         })
@@ -202,15 +200,12 @@ function getSearchData(){
 // category box
 function fetchCategories(){
 
-	fetch("http://18.213.194.28:3000/api/categories")
+	fetch("http://127.0.0.1:3000/api/categories")
     .then((response) => {
         return response.json();
     })
     .then((category) => {
-        
-        // 設定成不可視
         let dropdownMenuContainer = document.querySelector(".dropdown-menu-container");
-        dropdownMenuContainer.classList.add("hide-content");
 
         // 將item插入網頁
         let dropdownMenuBox = document.createElement("div");
@@ -224,7 +219,6 @@ function fetchCategories(){
         }
 
         dropdownMenuContainer.appendChild(dropdownMenuBox);
-
     })
     .catch((error) => {
         console.log(error);
@@ -238,14 +232,14 @@ function controlCategoryBox(){
 
     let clickTarget = document.querySelector(".search-attraction-input");
     clickTarget.addEventListener("click", () => {
-        dropdownMenuContainer.classList.add("open-content");
-        dropdownMenuContainer.classList.remove("hide-content");
+        dropdownMenuContainer.style.removeProperty("display");
+        dropdownMenuContainer.style.display = "block";
         selectCategoryItem();
     }, true);
 
     window.addEventListener("click", () => {
-        dropdownMenuContainer.classList.remove("open-content");
-        dropdownMenuContainer.classList.add("hide-content");
+        dropdownMenuContainer.style.removeProperty("display");
+        dropdownMenuContainer.style.display = "none";
     }, true);
 }
 controlCategoryBox();

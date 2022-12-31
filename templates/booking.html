@@ -15,11 +15,11 @@
                 <span class="nav-menu-list-sub booking-schedule-btn" onclick="goBookingCar();">預定行程</span>
                 <span class="nav-menu-list-sub signin-signup-btn" onclick="toggleForm();">登入/註冊</span>
                 <span class="nav-menu-list-sub logout-btn" onclick="logout();">系統登出</span>
-                <div class="background-layer"></div>
-                <div class="membership-container">
+                <div class="background-layer" style="display: none;"></div>
+                <div class="membership-container" style="display: none;">
                     <div class="membership-form login-popup">
                         <div class="membership-popup-decorator-bar"></div>
-                        <div class="close-btn" onclick="toggleForm();"></div>
+                        <div class="login-close-btn" onclick="toggleForm();"></div>
                         <div class="membership-input-field">
                             <div class="membership-popup-title">登入會員帳號</div>
                             <input type="email" placeholder="輸入電子信箱" name="email" class="membership-input-box email-input-box login-email-input">
@@ -31,7 +31,7 @@
                     </div>
                     <div class="membership-form signup-popup">
                         <div class="membership-popup-decorator-bar"></div>
-                        <div class="close-btn" onclick="toggleForm();"></div>
+                        <div class="signup-close-btn" onclick="toggleForm();"></div>
                         <div class="membership-input-field">
                             <div class="membership-popup-title">註冊會員帳號</div>
                             <input type="text" placeholder="輸入姓名" name="name" class="membership-input-box name-input-box signup-name-input">
@@ -46,7 +46,6 @@
             </div>
         </div>
     </nav>
-    
     <div class="booking-content-box">
         <div class="booking-guide-text title-style info-box-style">
             您好，<span class="user-name"></span>。您選擇的行程如下：
@@ -98,17 +97,26 @@
             <hr class="horizon-line">
             <div class="payment-information info-box-style">
                 <div class="payment-information-guide title-style">信用卡付款資訊</div>
-                <div class="payment-information-cardnumber input-content-style">
-                    <label for="cardnumber">卡片號碼：</label>
-                    <input type="text" class="input-box-style" placeholder="**** **** **** ****">
+                <div class="tpfield card-number-group">
+                    <div class="payment-information-cardnumber input-content-style">
+                        <label for="cardnumber">卡片號碼：</label>
+                        <div class="input-box-style card-number"></div>
+                        <!-- <input type="text" class="input-box-style card-number" placeholder="**** **** **** ****"> -->
+                    </div>
                 </div>
-                <div class="payment-information-expire input-content-style">
-                    <label for="expire">過期時間：</label>
-                    <input type="text" class="input-box-style" placeholder="MM / YY" >
+                <div class="tpfield card-expiration-date-group">
+                    <div class="payment-information-expire input-content-style">
+                        <label for="expire">過期時間：</label>
+                        <div class="input-box-style card-expiration-date"></div>
+                        <!-- <input type="text" class="input-box-style card-expiration-date" placeholder="MM / YY" > -->
+                    </div>
                 </div>
-                <div class="payment-information-auth input-content-style">
-                    <label for="authnumber">驗證密碼：</label>
-                    <input type="text" class="input-box-style" placeholder="CVV">
+                <div class="tpfield card-ccv-group">
+                    <div class="payment-information-auth input-content-style">
+                        <label for="authnumber">驗證密碼：</label>
+                        <div class="input-box-style card-ccv"></div>
+                        <!-- <input type="text" class="input-box-style card-ccv" placeholder="CCV"> -->
+                    </div>
                 </div>
             </div>
             <hr class="horizon-line">
@@ -117,7 +125,7 @@
                     總價新台幣： <span class="booking-schedule-confirm-price"></span> 元
                 </div>
                 <div class="booking-schedule-confirm-btn-div">
-                    <button class="booking-schedule-confirm-btn">確認訂購並付款</button>
+                    <button type="button" class="booking-schedule-confirm-btn btn btn-default" onclick="onSubmit(event);">確認訂購並付款</button>
                 </div>
             </div>
         </div>
@@ -126,6 +134,8 @@
         <div class="copyright-text">COPYRIGHT © 2021 台北一日遊</div>
     </div>
 </body>
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0" defer></script>
 <script src="{{ url_for('static', filename='scripts-membership.js') }}" defer></script>
 <script src="{{ url_for('static', filename='scripts-booking.js') }}" defer></script>
+<script src="{{ url_for('static', filename='scripts-tp.js') }}" defer></script>
 </html>

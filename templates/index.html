@@ -15,11 +15,11 @@
                 <span class="nav-menu-list-sub booking-schedule-btn" onclick="goBookingCar();">預定行程</span>
                 <span class="nav-menu-list-sub signin-signup-btn" onclick="toggleForm();">登入/註冊</span>
                 <span class="nav-menu-list-sub logout-btn" onclick="logout();">系統登出</span>
-                <div class="background-layer"></div>
-                <div class="membership-container">
+                <div class="background-layer" style="display: none;"></div>
+                <div class="membership-container" style="display: none;">
                     <div class="membership-form login-popup">
                         <div class="membership-popup-decorator-bar"></div>
-                        <div class="close-btn" onclick="toggleForm();"></div>
+                        <div class="login-close-btn" onclick="toggleForm();"></div>
                         <div class="membership-input-field">
                             <div class="membership-popup-title">登入會員帳號</div>
                             <input type="email" placeholder="輸入電子信箱" name="email" class="membership-input-box email-input-box login-email-input">
@@ -31,7 +31,7 @@
                     </div>
                     <div class="membership-form signup-popup">
                         <div class="membership-popup-decorator-bar"></div>
-                        <div class="close-btn" onclick="toggleForm();"></div>
+                        <div class="signup-close-btn" onclick="toggleForm();"></div>
                         <div class="membership-input-field">
                             <div class="membership-popup-title">註冊會員帳號</div>
                             <input type="text" placeholder="輸入姓名" name="name" class="membership-input-box name-input-box signup-name-input">
@@ -56,7 +56,7 @@
                 <div class="search-bar">
                     <input type="text" placeholder="輸入景點名稱查詢" class="search-attraction-input" name="keyword">
                     <input type="button" class="search-attraction-btn" onclick="sendSearchData();"></input>
-                    <div class="dropdown-menu-container"></div>
+                    <div class="dropdown-menu-container" style="display: none;"></div>
                 </div>
             </div>
         </div>

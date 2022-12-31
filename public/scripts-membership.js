@@ -222,28 +222,28 @@ function toggleForm(){
 // change-form
 function changeForm(){
     let signinForm = document.querySelector(".login-popup");
-    signinForm.classList.add("open-content");
+    signinForm.style.display = "block";
     let signupForm = document.querySelector(".signup-popup");
-    signupForm.classList.add("hide-content");
+    signupForm.style.display = "none";
 
     // change form signin => signup
     let changeToSignup = document.querySelector(".change-signin-to-signup");
 
     changeToSignup.addEventListener("click", () => {
-        signupForm.classList.add("open-content");
-        signupForm.classList.remove("hide-content");
-        signinForm.classList.add("hide-content");
-        signinForm.classList.remove("open-content");
+        signupForm.style.removeProperty("display");
+        signupForm.style.display = "block";
+        signinForm.style.removeProperty("display");
+        signinForm.style.display = "none";
     });
 
     // change form signup => signin
     let changeToSignin = document.querySelector(".change-signup-to-signin");
 
     changeToSignin.addEventListener("click", () => {
-        signinForm.classList.remove("hide-content");
-        signinForm.classList.add("open-content");
-        signupForm.classList.remove("open-content");
-        signupForm.classList.add("hide-content");
+        signinForm.style.removeProperty("display");
+        signinForm.style.display = "block";
+        signupForm.style.removeProperty("display");
+        signupForm.style.display = "none";
     });
 
     styleForm();

@@ -599,10 +599,16 @@ def payment(current_user):
 		print(result)
 
 		if result["status"] == 0:
+			# payment update 
 			pay_done = "付款完成"
 			update_order = "UPDATE order_history SET order_status = %s, pay_done = %s WHERE order_no = %s"
 			update_order_value = (result["status"], pay_done, order_no)
 			mycursor.execute(update_order, update_order_value)
+			attractions.commit()
+
+			# delete booking data
+			delete_booking = "DELETE FROM booking WHERE user_id = %s"
+			mycursor.execute(delete_booking, (customer_id, ))
 			attractions.commit()
 
 			response = {
@@ -617,9 +623,15 @@ def payment(current_user):
 			return jsonify(response)
 
 		if result["status"] > 0:
+			# payment update 
 			update_order = "UPDATE order_history SET order_status = %s WHERE order_no = %s"
 			update_order_value = (result["status"], order_no)
 			mycursor.execute(update_order, update_order_value)
+			attractions.commit()
+
+			# delete booking data
+			delete_booking = "DELETE FROM booking WHERE user_id = %s"
+			mycursor.execute(delete_booking, (customer_id, ))
 			attractions.commit()
 
 			response = {

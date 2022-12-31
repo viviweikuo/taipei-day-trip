@@ -558,6 +558,12 @@ input:focus{
         padding-right: 60px;
     }
 
+    /* simple content */
+
+    .no-booking-content{
+        width: 90vw;
+    }
+
     /* contact info */
     
     .contact-information-guide-text{

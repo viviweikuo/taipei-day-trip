@@ -1,6 +1,6 @@
 function goBookingCar(){
 
-    fetch("http://127.0.0.1:3000/api/user/auth", {
+    fetch("http://18.213.194.28:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -26,7 +26,7 @@ function goBookingCar(){
 
 function fetchBookingInfo(){
 
-    fetch("http://127.0.0.1:3000/api/booking")
+    fetch("http://18.213.194.28:3000/api/booking")
         .then((response) => {
             return response.json();
         })
@@ -110,7 +110,7 @@ function bookSchedule(){
         "price": bookingPrice
     }
     
-    fetch("http://127.0.0.1:3000/api/booking", {
+    fetch("http://18.213.194.28:3000/api/booking", {
         method: "POST",
         body: JSON.stringify(bookingData),
         headers: {
@@ -143,7 +143,7 @@ function bookSchedule(){
 
 function goConfirmBooking(){
 
-    fetch("http://127.0.0.1:3000/api/user/auth", {
+    fetch("http://18.213.194.28:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -164,7 +164,7 @@ function goConfirmBooking(){
 
 function deleteSchedule(){
 
-    fetch("http://127.0.0.1:3000/api/booking", {
+    fetch("http://18.213.194.28:3000/api/booking", {
         method: "DELETE",
         headers: {
             "content-type": "application/json",

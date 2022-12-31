@@ -98,7 +98,7 @@ function onSubmit(event) {
     // Get prime
     TPDirect.card.getPrime((result) => {
 
-        fetch("http://127.0.0.1:3000/api/booking")
+        fetch("http://18.213.194.28:3000/api/booking")
             .then((response) => {
                 return response.json();
             })
@@ -129,7 +129,7 @@ function onSubmit(event) {
                     }
                 }
                 console.log(orderData)
-                return fetch("http://127.0.0.1:3000/api/orders", { 
+                return fetch("http://18.213.194.28:3000/api/orders", { 
                             method: "POST",
                             body: JSON.stringify(orderData),
                             headers: {

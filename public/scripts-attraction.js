@@ -3,7 +3,7 @@ let attractionId = attractionPath.replace("/attraction/", "");
 
 function fetchAttractionData(){
 
-    fetch("http://127.0.0.1:3000/api/attraction/"+attractionId)
+    fetch("http://18.213.194.28:3000/api/attraction/"+attractionId)
     .then((response) => {
         return response.json();
     })

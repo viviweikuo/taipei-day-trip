@@ -9,7 +9,7 @@ function memberSignin(){
         "password": userPassword
         };
 
-    fetch("http://127.0.0.1:3000/api/user/auth", {
+    fetch("http://18.213.194.28:3000/api/user/auth", {
         method: "PUT",
         body: JSON.stringify(userData),
         credentials: "include",
@@ -84,7 +84,7 @@ function memberSignup(){
         return
     }
 
-    fetch("http://127.0.0.1:3000/api/user", {
+    fetch("http://18.213.194.28:3000/api/user", {
         method: "POST",
         body: JSON.stringify(userData),
         headers: {
@@ -124,7 +124,7 @@ function memberSignup(){
 // check login status
 function checkLogin(){
 
-    fetch("http://127.0.0.1:3000/api/user/auth", {
+    fetch("http://18.213.194.28:3000/api/user/auth", {
         method: "GET",
         credentials: "include",
     })
@@ -160,7 +160,7 @@ checkLogin();
 // log-out
 function logout(){
 
-    fetch("http://127.0.0.1:3000/api/user/auth", {
+    fetch("http://18.213.194.28:3000/api/user/auth", {
         method: "DELETE",
         credentials: "include",
         headers: {

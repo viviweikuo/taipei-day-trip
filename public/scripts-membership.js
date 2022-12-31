@@ -218,7 +218,6 @@ function toggleForm(){
         backgroundGray.style.display = "none";
     });
 }
-// toggleForm();
 
 // change-form
 function changeForm(){

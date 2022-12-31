@@ -86,8 +86,6 @@ nav{
 .background-layer{
     margin: auto;
 
-    /* max-width: auto;
-    height: auto; */
     background: rgba(0,0,0,0.5);
     overflow: hidden;
 

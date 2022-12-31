@@ -86,8 +86,6 @@ nav{
 .background-layer{
     margin: auto;
 
-    /* max-width: auto;
-    height: auto; */
     background: rgba(0,0,0,0.5);
     overflow: hidden;
 
@@ -470,7 +468,7 @@ nav{
 
 /* TapPay */
 
-/* Bootstrap 的 focus style */
+/* focus style */
 input:focus{
     border-color: #66afe9;
     outline: 0;

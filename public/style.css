@@ -77,8 +77,6 @@ nav{
 .background-layer{
     margin: auto;
 
-    /* max-width: auto;
-    height: auto; */
     background: rgba(0,0,0,0.5);
     overflow: hidden;
 
@@ -266,7 +264,6 @@ nav{
 }
 
 /* 登入&註冊 */
-
 
 .welcome-box{
     width: 1920px;

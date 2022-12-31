@@ -28,8 +28,7 @@ app.secret_key = "Gundam 00 is the best!!"
 
 # link to the database
 dbconfig = {
-	# TODO: "host":"0.0.0.0",
-	"host":"localhost",
+	"host":"0.0.0.0",
     "user":"root",
     "password":"zxcvbnmM12*",
     "database":"taipei_day_trip",
@@ -701,5 +700,4 @@ def get_order(current_user, orderNumber):
 		mycursor.close()
 		attractions.close()
 
-# TODO: app.run(host="0.0.0.0", port=3000)
-app.run(port=3000)
+app.run(host="0.0.0.0", port=3000)

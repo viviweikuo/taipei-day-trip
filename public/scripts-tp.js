@@ -2,8 +2,6 @@
 TPDirect.setupSDK(127146, 'app_TFVLpH1527pFlbEaBew9ts29ld37FdzMpxI1QYHMkzuUnwRycD67iDM7mfLU', 'sandbox')
 
 // 3. TPDirect.card.setup(config)
-// 以下提供必填 CCV 以及選填 CCV 的 Example
-// 必填 CCV Example
 TPDirect.card.setup({
     fields: {
         number: {
@@ -58,8 +56,6 @@ TPDirect.card.onUpdate(function (update) {
         submitButton.setAttribute('disabled', true)
     }
 
-    // FIXME: 過期日&CCV的綠框顯示不出來 classList讀不到
-    // number 欄位是錯誤的
     if (update.status.number === 2) {
         setNumberFormGroupToError('.card-number-group')
     } else if (update.status.number === 0) {
@@ -87,16 +83,11 @@ TPDirect.card.onUpdate(function (update) {
 
 // 5. Get Tappay Fields Status
 // 6. Get Prime
-// call TPDirect.card.getPrime when user submit form to get tappay prime
 function onSubmit(event) {
     event.preventDefault()
 
-    // fix keyboard issue in iOS device
-    // forceBlurIos()
-
     // 取得 TapPay Fields 的 status
     const tappayStatus = TPDirect.card.getTappayFieldsStatus()
-    console.log(tappayStatus)
 
     // 確認是否可以 getPrime
     if (tappayStatus.canGetPrime === false) {
@@ -106,11 +97,6 @@ function onSubmit(event) {
 
     // Get prime
     TPDirect.card.getPrime((result) => {
-        if (result.status !== 0) {
-            alert('Get prime error! ' + result.msg)
-            return
-        }
-        alert('Get prime successful, prime: ' + result.card.prime)
 
         fetch("http://127.0.0.1:3000/api/booking")
             .then((response) => {
@@ -180,20 +166,4 @@ function setNumberFormGroupToSuccess(selector) {
 function setNumberFormGroupToNormal(selector) {
     document.querySelector(selector).classList.remove('has-error')
     document.querySelector(selector).classList.remove('has-success')
-}
-
-function forceBlurIos() {
-    if (!isIos()) {
-        return
-    }
-    var input = document.createElement('input')
-    input.setAttribute('type', 'text')
-    // Insert to active element to ensure scroll lands somewhere relevant
-    document.activeElement.prepend(input)
-    input.focus()
-    input.parentNode.removeChild(input)
-}
-
-function isIos() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }

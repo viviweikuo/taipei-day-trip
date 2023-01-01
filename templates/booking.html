@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>booking</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style-booking.css') }}">
+</head>
+<body onload="fetchBookingInfo();">
+    <nav>
+        <a href="/"><div class="nav-title">台北一日遊</div></a>
+        <div class="nav-menu">
+            <div class="nav-menu-list">
+                <span class="nav-menu-list-sub booking-schedule-btn" onclick="goBookingCar();">預定行程</span>
+                <span class="nav-menu-list-sub signin-signup-btn" onclick="toggleForm();">登入/註冊</span>
+                <span class="nav-menu-list-sub logout-btn" onclick="logout();">系統登出</span>
+                <div class="background-layer" style="display: none;"></div>
+                <div class="membership-container" style="display: none;">
+                    <div class="membership-form login-popup">
+                        <div class="membership-popup-decorator-bar"></div>
+                        <div class="login-close-btn" onclick="toggleForm();"></div>
+                        <div class="membership-input-field">
+                            <div class="membership-popup-title">登入會員帳號</div>
+                            <input type="email" placeholder="輸入電子信箱" name="email" class="membership-input-box email-input-box login-email-input">
+                            <input type="password" placeholder="輸入密碼" name="password" class="membership-input-box password-input-box login-password-input">
+                            <div type="button" class="membership-popup-btn" onclick="memberSignin();">登入帳戶</div>
+                            <div class="error-message login-error-message hide-content"></div>
+                            <div class="change-membership-form">還沒有帳戶？<span class="change-signin-to-signup" onclick="changeForm();">點此註冊</span></div>
+                        </div>
+                    </div>
+                    <div class="membership-form signup-popup">
+                        <div class="membership-popup-decorator-bar"></div>
+                        <div class="signup-close-btn" onclick="toggleForm();"></div>
+                        <div class="membership-input-field">
+                            <div class="membership-popup-title">註冊會員帳號</div>
+                            <input type="text" placeholder="輸入姓名" name="name" class="membership-input-box name-input-box signup-name-input">
+                            <input type="email" placeholder="輸入電子信箱" name="email" class="membership-input-box email-input-box signup-email-input">
+                            <input type="password" placeholder="輸入密碼" name="password" class="membership-input-box password-input-box signup-password-input">
+                            <div type="button" class="membership-popup-btn" onclick="memberSignup();">註冊新帳戶</div>
+                            <div class="error-message signup-error-message hide-content"></div>
+                            <div class="change-membership-form">已經有帳戶了？<span class="change-signup-to-signin" onclick="changeForm();">點此登入</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="booking-content-box">
+        <div class="booking-guide-text title-style info-box-style">
+            您好，<span class="user-name"></span>。您選擇的行程如下：
+        </div>
+        <div class="no-booking-content info-box-style open-content">目前沒有任何待預訂的行程。</div>
+        <div class="booking-content hide-content">
+            <div class="booking-information-box info-box-style">
+                <div class="booking-information">
+                    <div class="booking-information-img-box"></div>
+                    <div class="booking-information-detail-box">
+                        <div class="booking-information-title content-style title-bold">
+                            <span class="booking-title-title">台北一日遊：</span>
+                            <span class="booking-title-name"></span>
+                        </div>
+                        <div class="booking-information-date content-style">
+                            <span class="booking-date-title title-bold">日期：</span>
+                            <span class="booking-date-body"></span>
+                        </div>
+                        <div class="booking-information-time content-style">
+                            <span class="booking-time-title title-bold">時段：</span>
+                            <span class="booking-time-body"></span>
+                        </div>
+                        <div class="booking-information-price content-style">
+                            <span class="booking-price-title title-bold">費用：</span>
+                            <span class="booking-price-body-box">新台幣 <span class="booking-price-body"></span> 元</span>
+                        </div>
+                        <div class="booking-information-address content-style">
+                            <span class="booking-address-title title-bold">地址：</span>
+                            <span class="booking-address-body"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-delete-btn" onclick="deleteSchedule();"></div>
+            </div>
+            <hr class="horizon-line">
+            <div class="contact-information info-box-style">
+                <div class="contact-information-guide title-style">您的聯絡資訊</div>
+                <div class="contact-information-name input-content-style">
+                    聯絡姓名：<input type="text" class="input-box-style contact-information-name-input">
+                </div>
+                <div class="contact-information-email input-content-style">
+                    聯絡信箱：<input type="email" class="input-box-style contact-information-email-input">
+                </div>
+                <div class="contact-information-mobile input-content-style">
+                    手機號碼：<input type="text" class="input-box-style contact-information-mobile-input">
+                </div>
+                <div class="contact-information-guide-text">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
+            </div>
+            <hr class="horizon-line">
+            <div class="payment-information info-box-style">
+                <div class="payment-information-guide title-style">信用卡付款資訊</div>
+                <div class="tpfield card-number-group">
+                    <div class="payment-information-cardnumber input-content-style">
+                        <label for="cardnumber">卡片號碼：</label>
+                        <div class="input-box-style card-number"></div>
+                    </div>
+                </div>
+                <div class="tpfield card-expiration-date-group">
+                    <div class="payment-information-expire input-content-style">
+                        <label for="expire">過期時間：</label>
+                        <div class="input-box-style card-expiration-date"></div>
+                    </div>
+                </div>
+                <div class="tpfield card-ccv-group">
+                    <div class="payment-information-auth input-content-style">
+                        <label for="authnumber">驗證密碼：</label>
+                        <div class="input-box-style card-ccv"></div>
+                    </div>
+                </div>
+            </div>
+            <hr class="horizon-line">
+            <div class="booking-schedule-confirm-box info-box-style">
+                <div class="booking-schedule-confirm-text-div title-bold content-style">
+                    總價新台幣： <span class="booking-schedule-confirm-price"></span> 元
+                </div>
+                <div class="booking-schedule-confirm-btn-div">
+                    <button type="button" class="booking-schedule-confirm-btn btn btn-default" onclick="onSubmit(event);">確認訂購並付款</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="copyright-text">COPYRIGHT © 2021 台北一日遊</div>
+    </div>
+</body>
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0" defer></script>
+<script src="{{ url_for('static', filename='scripts-membership.js') }}" defer></script>
+<script src="{{ url_for('static', filename='scripts-booking.js') }}" defer></script>
+<script src="{{ url_for('static', filename='scripts-tp.js') }}" defer></script>
+</html>
